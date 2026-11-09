@@ -303,6 +303,7 @@ function App() {
         <div className="sidebar-header">
           <div className="brand">
             <h3>Conversations</h3>
+            
           </div>
           <div className="header-actions">
             <button className="icon-btn" onClick={() => setIsDark(!isDark)} title="Toggle Theme">
