@@ -2,42 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ✅ ADD THESE APPLE TAGS -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="DayBloc">
-  <link rel="apple-touch-icon" href="/vite.svg">
-
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // 1. Wait for the PWA plugin to inject its manifest link
-    const manifestLink = document.querySelector('link[rel="manifest"]');
-    if (manifestLink) {
-      // 2. Define the exact base path for your GitHub Pages repo
-      const basePath = '/daybloc-admin/';
-      
-      // 3. Fetch the generated manifest, modify it, and replace the link
-      fetch(manifestLink.href)
-        .then(response => response.json())
-        .then(manifest => {
-          // Force the start_url and scope to the correct subpath
-          manifest.start_url = basePath;
-          manifest.scope = basePath;
-
-          // Create a new blob with the corrected manifest
-          const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-          const newManifestURL = URL.createObjectURL(blob);
-
-          // Point the HTML link to our new, corrected manifest
-          manifestLink.href = newManifestURL;
-        })
-        .catch(err => console.error('Failed to fix manifest for iOS:', err));
-    }
-  });
-</script>
+    
+    <!-- Apple PWA Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DayBloc">
+    <link rel="apple-touch-icon" href="/vite.svg">
 
     <title>DayBloc Admin</title>
   </head>
