@@ -1,0 +1,17 @@
+{
+  "name": "DayBloc Admin",
+  "short_name": "DayBloc",
+  "description": "Admin dashboard for DayBloc developer chats",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#0a84ff",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
