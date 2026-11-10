@@ -11,14 +11,12 @@ export default defineConfig({
       manifest: {
         name: 'DayBloc Admin',
         short_name: 'DayBloc',
-        // ❌ REMOVED: start_url: './',
-        scope: '/daybloc-admin/', 
         display: 'standalone',
         theme_color: '#0a84ff',
         background_color: '#121212',
         icons: [
           {
-            src: 'vite.svg', 
+            src: 'vite.svg',
             sizes: 'any',
             type: 'image/svg+xml'
           }
@@ -26,5 +24,5 @@ export default defineConfig({
       }
     })
   ],
-  base: '/daybloc-admin/',
+  base: '/daybloc-admin/', // Ensure this is your exact repo name
 })
