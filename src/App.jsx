@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabaseClient'
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { Moon, Sun, LogOut, Send, User, Info, X, Copy, Smartphone, CreditCard, Trash2 } from 'lucide-react'
+import { Moon, Sun, LogOut, Send, User, Info, X, Copy, Smartphone, CreditCard, Trash2, ArrowLeft } from 'lucide-react'
 import './App.css'
 
 const firebaseConfig = {
@@ -297,13 +297,13 @@ function App() {
   const activeRoomData = rooms.find(r => r.id === selectedRoom)
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${selectedRoom ? 'mobile-chat-open' : ''}`}>
       {/* Sidebar */}
       <div className="sidebar">
         <div className="sidebar-header">
           <div className="brand">
             <h3>Conversations</h3>
-            
+
           </div>
           <div className="header-actions">
             <button className="icon-btn" onClick={() => setIsDark(!isDark)} title="Toggle Theme">
@@ -351,12 +351,24 @@ function App() {
       <div className="chat-area">
         {selectedRoom ? (
           <>
-                        <div className="chat-header">
+                                   <div className="chat-header">
+              {/* ✅ MOBILE BACK BUTTON */}
+              <button 
+                className="icon-btn mobile-back-btn" 
+                onClick={() => {
+                  setSelectedRoom(null);
+                  setMessages([]);
+                  selectedRoomRef.current = null;
+                }}
+              >
+                <ArrowLeft size={20} />
+              </button>
+
               <div 
                 className="chat-header-info" 
                 onClick={() => setShowInfo(true)} 
                 title="Click to view user details"
-                style={{ flex: 1, cursor: 'pointer' }}
+                style={{ flex: 1, cursor: 'pointer', minWidth: 0 }}
               >
                 <h3>{activeRoomData?.username || 'Anonymous User'} <Info size={14} className="info-icon" /></h3>
                 <span className="device-id">Device: {activeRoomData?.device_id}</span>

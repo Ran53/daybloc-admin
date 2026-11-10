@@ -1,5 +1,4 @@
 :root {
-  /* Light Theme Variables */
   --bg-app: #f0f2f5;
   --bg-sidebar: #ffffff;
   --bg-chat: #f8f9fa;
@@ -16,7 +15,6 @@
 }
 
 body.dark {
-  /* Dark Theme Variables */
   --bg-app: #121212;
   --bg-sidebar: #1e1e1e;
   --bg-chat: #121212;
@@ -37,7 +35,7 @@ body.dark {
 body { background-color: var(--bg-app); color: var(--text-main); transition: background-color 0.3s, color 0.3s; overflow: hidden; }
 
 /* Login Screen */
-.login-wrapper { display: flex; height: 100vh; align-items: center; justify-content: center; background-color: var(--bg-app); }
+.login-wrapper { display: flex; height: 100dvh; align-items: center; justify-content: center; background-color: var(--bg-app); padding: 20px; }
 .login-card { background: var(--bg-sidebar); padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
 .login-card h2 { margin-bottom: 8px; text-align: center; color: var(--text-main); }
 .login-card .subtitle { text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
@@ -46,8 +44,8 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 .login-card button { width: 100%; padding: 14px; background: var(--bg-bubble-dev); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
 .login-card button:hover { opacity: 0.9; }
 
-/* App Layout */
-.app-container { display: flex; height: 100vh; width: 100vw; }
+/* App Layout - Using 100dvh for mobile browsers */
+.app-container { display: flex; height: 100dvh; width: 100vw; overflow: hidden; }
 
 /* Sidebar */
 .sidebar { width: 320px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; }
@@ -65,114 +63,37 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 .room-item.active .room-name { color: var(--active-text); }
 
 .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); margin-right: 12px; flex-shrink: 0; }
-.room-info { flex: 1; min-width: 0; /* Prevents text overflow */ }
-/* Update .room-name to use Flexbox for the dot */
-.room-name { 
-  display: flex; 
-  align-items: center; 
-  gap: 8px; 
-  font-weight: 600; 
-  font-size: 15px; 
-  margin-bottom: 4px; 
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-.room-preview { 
-  font-size: 12px; 
-  color: var(--text-muted); 
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-/* ✅ NEW CLASS: The Unread Badge */
-.unread-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #ff4d4d; /* Red */
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(255, 77, 77, 0.6);
-}
-
+.room-info { flex: 1; min-width: 0; }
+.room-name { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room-preview { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.unread-dot { width: 8px; height: 8px; background-color: #ff4d4d; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 6px rgba(255, 77, 77, 0.6); }
 .empty-state { text-align: center; padding: 20px; color: var(--text-muted); font-size: 14px; }
 
 /* Chat Area */
-.chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); min-width: 0; /* Prevents layout break */ }
-.chat-header { padding: 16px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; cursor: pointer; transition: background 0.2s; }
+.chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); min-width: 0; }
+.chat-header { padding: 16px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; cursor: pointer; transition: background 0.2s; gap: 12px; }
 .chat-header:hover { background: var(--hover-bg); }
 .chat-header-info h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; margin-bottom: 2px; }
 .info-icon { color: var(--text-muted); }
 .device-id { font-size: 12px; color: var(--text-muted); }
 
-.messages-container { 
-  flex: 1; 
-  overflow-y: auto; 
-  padding: clamp(16px, 4vw, 48px); /* Automatically scales padding based on screen size */
-  display: flex; 
-  flex-direction: column; 
-  gap: 16px; 
-}
-
+.messages-container { flex: 1; overflow-y: auto; padding: clamp(16px, 4vw, 48px); display: flex; flex-direction: column; gap: 16px; }
 .message-row { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
 .message-row.user { align-self: flex-start; }
 .message-row.dev { align-self: flex-end; flex-direction: row-reverse; }
-
 .avatar-small { width: 24px; height: 24px; border-radius: 50%; background: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-shrink: 0; margin-bottom: 4px; }
-
 .message-content { display: flex; flex-direction: column; }
 .message-row.dev .message-content { align-items: flex-end; }
-
 .bubble { padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
 .message-row.user .bubble { background: var(--bg-bubble-user); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: var(--shadow); }
 .message-row.dev .bubble { background: var(--bg-bubble-dev); color: var(--text-inverse); border-bottom-right-radius: 4px; box-shadow: var(--shadow); }
-
 .timestamp { font-size: 11px; color: var(--text-muted); margin-top: 6px; padding: 0 4px; }
 
 /* Reply Form */
-.reply-form { 
-  display: flex; 
-  padding: 16px 24px; 
-  background: var(--bg-sidebar); 
-  border-top: 1px solid var(--border-color); 
-  gap: 12px; 
-  align-items: center; 
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.reply-form input { 
-  flex: 1; 
-  min-width: 0; /* CRITICAL: Fixes the send button pushing off screen */
-  padding: 14px 20px; 
-  border: 1px solid var(--border-color); 
-  border-radius: 24px; 
-  background: var(--bg-app); 
-  color: var(--text-main); 
-  font-size: 15px; 
-  outline: none; 
-  transition: border 0.2s; 
-}
-
+.reply-form { display: flex; padding: 16px 24px; background: var(--bg-sidebar); border-top: 1px solid var(--border-color); gap: 12px; align-items: center; width: 100%; box-sizing: border-box; }
+.reply-form input { flex: 1; min-width: 0; padding: 14px 20px; border: 1px solid var(--border-color); border-radius: 24px; background: var(--bg-app); color: var(--text-main); font-size: 15px; outline: none; transition: border 0.2s; }
 .reply-form input:focus { border-color: var(--bg-bubble-dev); }
-
-.send-btn { 
-  width: 44px; 
-  height: 44px; 
-  border-radius: 50%; 
-  background: var(--bg-bubble-dev); 
-  color: white; 
-  border: none; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  cursor: pointer; 
-  transition: transform 0.1s, opacity 0.2s; 
-  flex-shrink: 0; /* CRITICAL: Prevents button from squishing */
-}
-
+.send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-bubble-dev); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s, opacity 0.2s; flex-shrink: 0; }
 .send-btn:hover { opacity: 0.9; transform: scale(1.05); }
 .send-btn:active { transform: scale(0.95); }
 
@@ -183,7 +104,7 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 .empty-chat p { font-size: 14px; }
 
 /* Modal */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.15s ease-out; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.15s ease-out; padding: 20px; }
 .modal-content { background: var(--bg-sidebar); width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid var(--border-color); overflow: hidden; animation: slideUp 0.2s ease-out; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); }
 .modal-header h2 { font-size: 18px; font-weight: 700; }
@@ -207,33 +128,34 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+/* Date Divider */
+.date-divider { display: flex; justify-content: center; margin: 24px 0 16px 0; width: 100%; }
+.date-divider span { background: var(--bg-sidebar); color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 6px 14px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
 
-/* --- Date Divider --- */
-.date-divider {
-  display: flex;
-  justify-content: center;
-  margin: 24px 0 16px 0;
-  width: 100%;
-}
+/* Delete Chat Button */
+.delete-btn { color: var(--text-muted); margin-left: auto; }
+.delete-btn:hover { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
 
-.date-divider span {
-  background: var(--bg-sidebar);
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
-}
+/* Mobile Back Button */
+.mobile-back-btn { display: none; margin-right: 8px; }
 
-/* --- Delete Chat Button --- */
-.delete-btn {
-  color: var(--text-muted);
-  margin-left: 16px;
-}
+/* --- MOBILE RESPONSIVENESS (The Magic Part) --- */
+@media (max-width: 768px) {
+  .sidebar { width: 100%; display: flex; }
+  .chat-area { display: none; width: 100%; }
+  
+  /* When the 'mobile-chat-open' class is active, hide sidebar and show chat */
+  .app-container.mobile-chat-open .sidebar { display: none; }
+  .app-container.mobile-chat-open .chat-area { display: flex; }
 
-.delete-btn:hover {
-  color: #ff4d4d;
-  background: rgba(255, 77, 77, 0.1);
+  /* Show the back button on mobile */
+  .mobile-back-btn { display: flex; }
+
+  /* Adjust paddings for mobile */
+  .messages-container { padding: 16px; }
+  .reply-form { padding: 12px 16px; }
+  .chat-header { padding: 12px 16px; }
+  
+  /* Hide the device ID on mobile to save space */
+  .device-id { display: none; }
 }
