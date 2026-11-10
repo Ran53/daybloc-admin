@@ -30,29 +30,50 @@ body.dark {
   --shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+/* ✅ Prevent blue tap highlights on mobile */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-body { background-color: var(--bg-app); color: var(--text-main); transition: background-color 0.3s, color 0.3s; overflow: hidden; }
+/* ✅ Prevent pull-to-refresh bounce on mobile */
+body { 
+  background-color: var(--bg-app); 
+  color: var(--text-main); 
+  transition: background-color 0.3s, color 0.3s; 
+  overflow: hidden; 
+  overscroll-behavior: none; 
+}
 
 /* Login Screen */
 .login-wrapper { display: flex; height: 100dvh; align-items: center; justify-content: center; background-color: var(--bg-app); padding: 20px; }
 .login-card { background: var(--bg-sidebar); padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
 .login-card h2 { margin-bottom: 8px; text-align: center; color: var(--text-main); }
 .login-card .subtitle { text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-.login-card input { width: 100%; padding: 14px; margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-app); color: var(--text-main); font-size: 15px; outline: none; transition: border 0.2s; }
+.login-card input { width: 100%; padding: 14px; margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-app); color: var(--text-main); font-size: 16px; outline: none; transition: border 0.2s; }
 .login-card input:focus { border-color: var(--bg-bubble-dev); }
 .login-card button { width: 100%; padding: 14px; background: var(--bg-bubble-dev); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
 .login-card button:hover { opacity: 0.9; }
 
 /* App Layout - Using 100dvh for mobile browsers */
-.app-container { display: flex; height: 100dvh; width: 100vw; overflow: hidden; }
+.app-container { 
+  display: flex; 
+  height: 100dvh; 
+  width: 100%; /* ✅ Changed from 100vw to 100% */
+  overflow: hidden; 
+}
 
 /* Sidebar */
 .sidebar { width: 320px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; }
-.sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+.sidebar-header { 
+  padding: 20px; 
+  /* ✅ Safe area for iPhone notch */
+  padding-top: calc(20px + env(safe-area-inset-top)); 
+  border-bottom: 1px solid var(--border-color); 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
 .brand h3 { font-size: 20px; font-weight: 700; }
 .header-actions { display: flex; gap: 8px; }
-.icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
+.icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
 .icon-btn:hover { background: var(--hover-bg); color: var(--text-main); }
 .icon-btn.logout:hover { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
 
@@ -71,7 +92,18 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 
 /* Chat Area */
 .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); min-width: 0; }
-.chat-header { padding: 16px 24px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; cursor: pointer; transition: background 0.2s; gap: 12px; }
+.chat-header { 
+  padding: 16px 24px; 
+  /* ✅ Safe area for iPhone notch */
+  padding-top: calc(16px + env(safe-area-inset-top)); 
+  background: var(--bg-sidebar); 
+  border-bottom: 1px solid var(--border-color); 
+  display: flex; 
+  align-items: center; 
+  cursor: pointer; 
+  transition: background 0.2s; 
+  gap: 12px; 
+}
 .chat-header:hover { background: var(--hover-bg); }
 .chat-header-info h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; margin-bottom: 2px; }
 .info-icon { color: var(--text-muted); }
@@ -90,8 +122,33 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 .timestamp { font-size: 11px; color: var(--text-muted); margin-top: 6px; padding: 0 4px; }
 
 /* Reply Form */
-.reply-form { display: flex; padding: 16px 24px; background: var(--bg-sidebar); border-top: 1px solid var(--border-color); gap: 12px; align-items: center; width: 100%; box-sizing: border-box; }
-.reply-form input { flex: 1; min-width: 0; padding: 14px 20px; border: 1px solid var(--border-color); border-radius: 24px; background: var(--bg-app); color: var(--text-main); font-size: 15px; outline: none; transition: border 0.2s; }
+.reply-form { 
+  display: flex; 
+  padding: 16px 24px; 
+  /* ✅ Safe area for iPhone bottom bar */
+  padding-bottom: calc(16px + env(safe-area-inset-bottom)); 
+  background: var(--bg-sidebar); 
+  border-top: 1px solid var(--border-color); 
+  gap: 12px; 
+  align-items: center; 
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+.reply-form input { 
+  flex: 1; 
+  min-width: 0; 
+  padding: 14px 20px; 
+  border: 1px solid var(--border-color); 
+  border-radius: 24px; 
+  background: var(--bg-app); 
+  color: var(--text-main); 
+  /* ✅ CRITICAL: font-size MUST be 16px to prevent iOS auto-zoom */
+  font-size: 16px; 
+  outline: none; 
+  transition: border 0.2s; 
+}
+
 .reply-form input:focus { border-color: var(--bg-bubble-dev); }
 .send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-bubble-dev); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s, opacity 0.2s; flex-shrink: 0; }
 .send-btn:hover { opacity: 0.9; transform: scale(1.05); }
@@ -139,7 +196,7 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 /* Mobile Back Button */
 .mobile-back-btn { display: none; margin-right: 8px; }
 
-/* --- MOBILE RESPONSIVENESS (The Magic Part) --- */
+/* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
   .sidebar { width: 100%; display: flex; }
   .chat-area { display: none; width: 100%; }
@@ -153,9 +210,12 @@ body { background-color: var(--bg-app); color: var(--text-main); transition: bac
 
   /* Adjust paddings for mobile */
   .messages-container { padding: 16px; }
-  .reply-form { padding: 12px 16px; }
-  .chat-header { padding: 12px 16px; }
+  .reply-form { padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .chat-header { padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); }
   
   /* Hide the device ID on mobile to save space */
   .device-id { display: none; }
+  
+  /* Hide scrollbars on mobile for a cleaner look */
+  ::-webkit-scrollbar { display: none; }
 }

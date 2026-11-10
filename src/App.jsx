@@ -395,7 +395,7 @@ function App() {
                 placeholder="Type your reply..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                autoFocus
+                // autoFocus
               />
               <button type="submit" className="send-btn">
                 <Send size={18} />
