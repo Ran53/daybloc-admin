@@ -11,17 +11,14 @@ export default defineConfig({
       manifest: {
         name: 'DayBloc Admin',
         short_name: 'DayBloc',
-        description: 'Admin dashboard for DayBloc developer chats',
+        // ❌ REMOVED: start_url: './',
+        scope: '/daybloc-admin/', 
+        display: 'standalone',
         theme_color: '#0a84ff',
         background_color: '#121212',
-        display: 'standalone',
-        // ✅ FIX: Add the subpath to start_url and scope
-     // ✅ CHANGE THIS:
-  start_url: './', 
-  scope: '/daybloc-admin/', 
         icons: [
           {
-            src: 'vite.svg', // Replace with a real icon path later
+            src: 'vite.svg', 
             sizes: 'any',
             type: 'image/svg+xml'
           }
