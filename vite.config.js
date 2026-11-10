@@ -1,3 +1,4 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -14,6 +15,9 @@ export default defineConfig({
         theme_color: '#0a84ff',
         background_color: '#121212',
         display: 'standalone',
+        // ✅ FIX: Add the subpath to start_url and scope
+        start_url: '/daybloc-admin/',
+        scope: '/daybloc-admin/',
         icons: [
           {
             src: 'vite.svg', // Replace with a real icon path later
