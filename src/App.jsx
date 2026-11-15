@@ -27,11 +27,14 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [isDark, setIsDark] = useState(true)
   const [showInfo, setShowInfo] = useState(false)
-  // Replace the current unreadRooms state with this:
   const [unreadRooms, setUnreadRooms] = useState(() => {
     const saved = localStorage.getItem('daybloc_unread_rooms');
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
+
+  // ✅ NEW: State for the Manual RC ID Modal
+  const [showRcModal, setShowRcModal] = useState(false);
+  const [manualRcInput, setManualRcInput] = useState('');
 
   const messagesEndRef = useRef(null)
   const selectedRoomRef = useRef(null)
@@ -50,8 +53,7 @@ function App() {
     document.body.className = isDark ? 'dark' : 'light'
   }, [isDark])
 
-    useEffect(() => {
-    // Save unread rooms to localStorage whenever it changes
+  useEffect(() => {
     localStorage.setItem('daybloc_unread_rooms', JSON.stringify(Array.from(unreadRooms)));
   }, [unreadRooms]);
 
@@ -180,26 +182,65 @@ function App() {
     }
   }
 
-    const handleDeleteRoom = async (e) => {
-    e.stopPropagation(); // Prevent the Info modal from opening
+  const handleDeleteMessage = async (msgId) => {
+    if (!window.confirm("Delete this message?")) return;
+    const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
+    if (error) alert(error.message);
+    else setMessages((prev) => prev.filter(m => m.id !== msgId));
+  };
+
+  const handleEditMessage = async (msgId, currentContent) => {
+    const newContent = prompt("Edit message:", currentContent);
+    if (!newContent || newContent.trim() === currentContent.trim()) return;
     
-    if (!window.confirm("Are you sure you want to resolve this chat? All messages will be permanently deleted.")) {
-      return;
+    const { error } = await supabase
+      .from('chat_messages')
+      .update({ content: newContent.trim() })
+      .eq('id', msgId);
+      
+    if (error) alert(error.message);
+    else setMessages((prev) => 
+      prev.map(m => m.id === msgId ? { ...m, content: newContent.trim() } : m)
+    );
+  };
+
+  // ✅ NEW: Open modal functions for RC ID
+  const openRcModal = (e) => {
+    e.stopPropagation();
+    setManualRcInput(activeRoomData.revenuecat_id || '');
+    setShowRcModal(true);
+  };
+
+  const saveManualRc = async () => {
+    if (!manualRcInput.trim()) return;
+
+    const { error } = await supabase
+      .from('chat_rooms')
+      .update({ revenuecat_id: manualRcInput.trim() })
+      .eq('id', selectedRoom);
+
+    if (error) {
+      alert("Error updating RevenueCat ID: " + error.message);
+    } else {
+      setRooms((prev) =>
+        prev.map((r) => r.id === selectedRoom ? { ...r, revenuecat_id: manualRcInput.trim() } : r)
+      );
+      setShowRcModal(false);
     }
+  };
+
+  const handleDeleteRoom = async (e) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to resolve this chat? All messages will be permanently deleted.")) return;
 
     const { error } = await supabase.from('chat_rooms').delete().eq('id', selectedRoom);
 
     if (error) {
       alert(error.message);
     } else {
-      // 1. Remove from sidebar
       setRooms((prev) => prev.filter((r) => r.id !== selectedRoom));
-      
-      // 2. Clear active chat
       setSelectedRoom(null);
       setMessages([]);
-      
-      // 3. Remove unread badge if it existed
       setUnreadRooms((prev) => {
         const next = new Set(prev);
         next.delete(selectedRoom);
@@ -224,33 +265,27 @@ function App() {
     navigator.clipboard.writeText(text)
   }
 
-  // ✅ NEW: Helper function to render messages with Date Dividers
   const renderMessagesWithDividers = () => {
     if (!messages || messages.length === 0) return null;
 
     const elements = [];
     let previousDateStr = null;
 
-    messages.forEach((msg, index) => {
+    messages.forEach((msg) => {
       const msgDate = new Date(msg.created_at);
-      const dateStr = msgDate.toDateString(); // e.g., "Mon Oct 24 2023"
+      const dateStr = msgDate.toDateString();
 
-      // If the day changes, insert a divider
       if (dateStr !== previousDateStr) {
         const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
         let dateText = '';
-        if (dateStr === today.toDateString()) {
-          dateText = 'Today';
-        } else if (dateStr === yesterday.toDateString()) {
-          dateText = 'Yesterday';
-        } else {
+        if (dateStr === today.toDateString()) dateText = 'Today';
+        else if (dateStr === yesterday.toDateString()) dateText = 'Yesterday';
+        else {
           dateText = msgDate.toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+            year: 'numeric', month: 'long', day: 'numeric'
           });
         }
 
@@ -259,7 +294,6 @@ function App() {
             <span>{dateText}</span>
           </div>
         );
-
         previousDateStr = dateStr;
       }
 
@@ -267,14 +301,20 @@ function App() {
       elements.push(
         <div key={msg.id} className={`message-row ${isDev ? 'dev' : 'user'}`}>
           {!isDev && <div className="avatar-small"><User size={14} /></div>}
-          <div className="message-content">
+          
+          <div className="message-content" style={{ position: 'relative' }}>
+            {isDev && (
+              <div className="message-actions">
+                <button onClick={() => handleEditMessage(msg.id, msg.content)} title="Edit">✏️</button>
+                <button onClick={() => handleDeleteMessage(msg.id)} title="Delete">🗑️</button>
+              </div>
+            )}
             <div className="bubble">{msg.content}</div>
             <div className="timestamp">{formatTime(msg.created_at)}</div>
           </div>
         </div>
       );
     });
-
     return elements;
   };
 
@@ -303,13 +343,12 @@ function App() {
         <div className="sidebar-header">
           <div className="brand">
             <h3>Conversations</h3>
-
           </div>
           <div className="header-actions">
             <button className="icon-btn" onClick={() => setIsDark(!isDark)} title="Toggle Theme">
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-                        <button 
+            <button 
               className="icon-btn logout" 
               onClick={() => {
                 localStorage.removeItem('daybloc_unread_rooms');
@@ -338,7 +377,7 @@ function App() {
                   {unreadRooms.has(room.id) && <span className="unread-dot" />}
                 </div>
                 <div className="room-preview">
-                  {room.revenuecat_id ? `RC: ${room.revenuecat_id.split('_').pop().substring(0,8)}...` : 'No RC ID'}
+                  {room.revenuecat_id ? `RC: ${room.revenuecat_id.split('_').pop().substring(0,8)}...` : 'Missing RC ID ⚠️'}
                 </div>
               </div>
             </div>
@@ -351,8 +390,7 @@ function App() {
       <div className="chat-area">
         {selectedRoom ? (
           <>
-                                   <div className="chat-header">
-              {/* ✅ MOBILE BACK BUTTON */}
+            <div className="chat-header">
               <button 
                 className="icon-btn mobile-back-btn" 
                 onClick={() => {
@@ -384,18 +422,23 @@ function App() {
             </div>
             
             <div className="messages-container">
-              {/* ✅ USE THE NEW HELPER FUNCTION HERE */}
               {renderMessagesWithDividers()}
               <div ref={messagesEndRef} />
             </div>
 
             <form className="reply-form" onSubmit={sendReply}>
-              <input
-                type="text"
+              <textarea
                 placeholder="Type your reply..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                // autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendReply(e);
+                  }
+                }}
+                rows={1}
+                style={{ resize: 'none', height: 'auto', maxHeight: '120px', overflowY: 'auto' }}
               />
               <button type="submit" className="send-btn">
                 <Send size={18} />
@@ -449,6 +492,17 @@ function App() {
                   <span className="mono">{activeRoomData.revenuecat_id || 'Not provided'}</span>
                   <Copy size={14} className="copy-icon" />
                 </div>
+                
+                {(!activeRoomData.revenuecat_id || activeRoomData.revenuecat_id.trim() === '') && (
+                  <button 
+                    onClick={openRcModal}
+                    style={{
+                      marginTop: '8px', padding: '8px', background: 'var(--bg-bubble-dev)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '600'
+                    }}
+                  >
+                    + Add RC ID Manually
+                  </button>
+                )}
               </div>
               
               <div className="info-group">
@@ -456,6 +510,48 @@ function App() {
                 <div className="info-value">
                   <span>{new Date(activeRoomData.created_at).toLocaleString()}</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MANUAL RC ID MODAL --- */}
+      {showRcModal && (
+        <div className="modal-overlay" onClick={() => setShowRcModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '350px' }}>
+            <div className="modal-header">
+              <h2>Add RevenueCat ID</h2>
+              <button className="icon-btn" onClick={() => setShowRcModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <input 
+                type="text" 
+                placeholder="e.g. $RCAnonymousID:12345..." 
+                value={manualRcInput}
+                onChange={(e) => setManualRcInput(e.target.value)}
+                style={{
+                  width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-app)', color: 'var(--text-main)', fontSize: '16px', outline: 'none', marginBottom: '16px'
+                }}
+                autoFocus
+              />
+              
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  onClick={() => setShowRcModal(false)}
+                  style={{ flex: 1, padding: '12px', background: 'var(--hover-bg)', color: 'var(--text-main)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={saveManualRc}
+                  style={{ flex: 1, padding: '12px', background: 'var(--bg-bubble-dev)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Save
+                </button>
               </div>
             </div>
           </div>

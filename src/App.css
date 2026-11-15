@@ -30,10 +30,8 @@ body.dark {
   --shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* ✅ Prevent blue tap highlights on mobile */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-/* ✅ Prevent pull-to-refresh bounce on mobile */
 body { 
   background-color: var(--bg-app); 
   color: var(--text-main); 
@@ -52,25 +50,12 @@ body {
 .login-card button { width: 100%; padding: 14px; background: var(--bg-bubble-dev); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
 .login-card button:hover { opacity: 0.9; }
 
-/* App Layout - Using 100dvh for mobile browsers */
-.app-container { 
-  display: flex; 
-  height: 100dvh; 
-  width: 100%; /* ✅ Changed from 100vw to 100% */
-  overflow: hidden; 
-}
+/* App Layout */
+.app-container { display: flex; height: 100dvh; width: 100%; overflow: hidden; }
 
 /* Sidebar */
 .sidebar { width: 320px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; }
-.sidebar-header { 
-  padding: 20px; 
-  /* ✅ Safe area for iPhone notch */
-  padding-top: calc(20px + env(safe-area-inset-top)); 
-  border-bottom: 1px solid var(--border-color); 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-}
+.sidebar-header { padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
 .brand h3 { font-size: 20px; font-weight: 700; }
 .header-actions { display: flex; gap: 8px; }
 .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
@@ -92,64 +77,103 @@ body {
 
 /* Chat Area */
 .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); min-width: 0; }
-.chat-header { 
-  padding: 16px 24px; 
-  /* ✅ Safe area for iPhone notch */
-  padding-top: calc(16px + env(safe-area-inset-top)); 
-  background: var(--bg-sidebar); 
-  border-bottom: 1px solid var(--border-color); 
-  display: flex; 
-  align-items: center; 
-  cursor: pointer; 
-  transition: background 0.2s; 
-  gap: 12px; 
-}
+.chat-header { padding: 16px 24px; padding-top: calc(16px + env(safe-area-inset-top)); background: var(--bg-sidebar); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; cursor: pointer; transition: background 0.2s; gap: 12px; }
 .chat-header:hover { background: var(--hover-bg); }
 .chat-header-info h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; margin-bottom: 2px; }
 .info-icon { color: var(--text-muted); }
 .device-id { font-size: 12px; color: var(--text-muted); }
 
+/* Messages */
 .messages-container { flex: 1; overflow-y: auto; padding: clamp(16px, 4vw, 48px); display: flex; flex-direction: column; gap: 16px; }
 .message-row { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
 .message-row.user { align-self: flex-start; }
 .message-row.dev { align-self: flex-end; flex-direction: row-reverse; }
+
 .avatar-small { width: 24px; height: 24px; border-radius: 50%; background: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-shrink: 0; margin-bottom: 4px; }
-.message-content { display: flex; flex-direction: column; }
+
+/* Message Content & Bubble */
+.message-content { display: flex; flex-direction: column; position: relative; }
 .message-row.dev .message-content { align-items: flex-end; }
-.bubble { padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+
+.bubble { padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; }
 .message-row.user .bubble { background: var(--bg-bubble-user); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: var(--shadow); }
 .message-row.dev .bubble { background: var(--bg-bubble-dev); color: var(--text-inverse); border-bottom-right-radius: 4px; box-shadow: var(--shadow); }
+
 .timestamp { font-size: 11px; color: var(--text-muted); margin-top: 6px; padding: 0 4px; }
 
-/* Reply Form */
-.reply-form { 
-  display: flex; 
-  padding: 16px 24px; 
-  /* ✅ Safe area for iPhone bottom bar */
-  padding-bottom: calc(16px + env(safe-area-inset-bottom)); 
-  background: var(--bg-sidebar); 
-  border-top: 1px solid var(--border-color); 
-  gap: 12px; 
-  align-items: center; 
-  width: 100%; 
-  box-sizing: border-box; 
+/* --- Message Hover Actions --- */
+.message-actions {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -100px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+  /* ✅ Invisible hover bridge */
+  padding: 20px 40px; 
+  margin: -20px 0;
 }
 
-.reply-form input { 
+/* Keep visible when hovering over the actions */
+.message-actions:hover {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Show on hover of the message row */
+.message-row.dev:hover .message-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Style the tiny buttons */
+.message-actions button {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: background 0.2s, transform 0.1s;
+  color: var(--text-main);
+}
+
+.message-actions button:hover {
+  background: var(--hover-bg);
+  transform: scale(1.1);
+}
+
+/* Reply Form */
+.reply-form { display: flex; padding: 16px 24px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); background: var(--bg-sidebar); border-top: 1px solid var(--border-color); gap: 12px; align-items: center; width: 100%; box-sizing: border-box; }
+
+.reply-form textarea { 
   flex: 1; 
   min-width: 0; 
-  padding: 14px 20px; 
+  padding: 12px 20px; 
   border: 1px solid var(--border-color); 
   border-radius: 24px; 
   background: var(--bg-app); 
   color: var(--text-main); 
-  /* ✅ CRITICAL: font-size MUST be 16px to prevent iOS auto-zoom */
   font-size: 16px; 
   outline: none; 
   transition: border 0.2s; 
+  font-family: inherit;
+  line-height: 1.4;
+  resize: none;
+  min-height: 44px;
+  max-height: 120px;
 }
+.reply-form textarea:focus { border-color: var(--bg-bubble-dev); }
 
-.reply-form input:focus { border-color: var(--bg-bubble-dev); }
 .send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-bubble-dev); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s, opacity 0.2s; flex-shrink: 0; }
 .send-btn:hover { opacity: 0.9; transform: scale(1.05); }
 .send-btn:active { transform: scale(0.95); }
@@ -201,21 +225,25 @@ body {
   .sidebar { width: 100%; display: flex; }
   .chat-area { display: none; width: 100%; }
   
-  /* When the 'mobile-chat-open' class is active, hide sidebar and show chat */
   .app-container.mobile-chat-open .sidebar { display: none; }
   .app-container.mobile-chat-open .chat-area { display: flex; }
 
-  /* Show the back button on mobile */
   .mobile-back-btn { display: flex; }
 
-  /* Adjust paddings for mobile */
   .messages-container { padding: 16px; }
   .reply-form { padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
   .chat-header { padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); }
   
-  /* Hide the device ID on mobile to save space */
   .device-id { display: none; }
   
-  /* Hide scrollbars on mobile for a cleaner look */
   ::-webkit-scrollbar { display: none; }
+
+  /* On mobile, move the actions to the top-right of the bubble */
+  .message-actions {
+    top: -30px;
+    left: 0;
+    transform: none;
+    padding: 0;
+    margin: 0;
+  }
 }
