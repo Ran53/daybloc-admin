@@ -214,18 +214,27 @@ function App() {
   const saveManualRc = async () => {
     if (!manualRcInput.trim()) return;
 
-    const { error } = await supabase
+    // Ask Supabase to return the updated row. 
+    // If RLS blocks it, it will throw a specific error.
+    const { data, error } = await supabase
       .from('chat_rooms')
       .update({ revenuecat_id: manualRcInput.trim() })
-      .eq('id', selectedRoom);
+      .eq('id', selectedRoom)
+      .select();
+
+    // ✅ LOG THE EXACT ERROR TO THE CONSOLE
+    console.log("Supabase Update Response:", { data, error });
 
     if (error) {
-      alert("Error updating RevenueCat ID: " + error.message);
+      // Show the actual Postgres error message
+      alert(`Supabase Error: ${error.message}\nCode: ${error.code}\nDetails: ${error.details}`);
+    } else if (!data || data.length === 0) {
+      // If no error but no data, it's an RLS issue or the room ID doesn't exist
+      alert("Update failed silently. This usually means RLS is blocking the update, or the room ID is wrong.");
     } else {
-      setRooms((prev) =>
-        prev.map((r) => r.id === selectedRoom ? { ...r, revenuecat_id: manualRcInput.trim() } : r)
-      );
+      // Success!
       setShowRcModal(false);
+      await fetchRooms(); 
     }
   };
 
